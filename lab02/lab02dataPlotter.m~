@@ -1,0 +1,23 @@
+format long;
+
+A = importdata('lab02lameData');
+
+fs = 16;
+lw = 1.5;
+
+FigHandle = figure( 'Name', 'Free Memory', 'position', [200, 75, 850, 600]);
+
+%plot( A(:,1), A(:,3:5),'linewidth', lw)
+plot( A(:,1), A(:,2),'linewidth', lw)
+plot( A(:,1), A(:,2),'linewidth', lw)
+
+grid on; 
+
+set(gca, 'fontsize', fs);
+
+xlabel('Index', 'fontsize', fs);
+ylabel('Kilobytes', 'fontsize', fs);
+
+%legend('loadavg 1min' , 'loadavg 5min', 'loadavg 15min', 'location', 'northeast');
+legend('Memfree', 'location', 'northeast');
+
