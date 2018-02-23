@@ -1,5 +1,5 @@
 // Boom Johnson - Walter Rasmussen - Spring 2018
-// lab03a.c - A game of tic tac toe against the computer which writes to an .html file. 
+// lab03b.c - A game of connect against the computer which writes to an .html file. 
 
 #include<stdio.h>
 #include<unistd.h>
@@ -8,9 +8,9 @@
 #include<time.h>
 
 // Dimensions of the game board. 
-#define WIDTH 3
-#define HEIGHT 3
-#define TILES 9
+#define WIDTH 6
+#define HEIGHT 6
+#define TILES 36
 
 // Updates the array storing the html code based on player and computer moves.
 int board( int choice, char player, int moveCount); 
@@ -32,7 +32,7 @@ struct token{
 FILE *writefp; // For file IO
 char *doc[256]; // The array that stores the .html file
 char gameBoard[TILES] = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
-int writeGrid[TILES];
+int writeGrid[TILES]; // The line numbers of the lines in the .html that we want to change.
 struct token playerT[TILES]; // Player's tokens.
 struct token compT[TILES]; // Computer's tokens. 
 
@@ -44,7 +44,7 @@ int main(int argc, char *argz[])
 	startup();
 	writeToHTML();	
 
-	system("chromium-browser ./lamedisplay.html &\n");
+	system("chromium-browser ./cooldisplay.html &\n");
 
 
 	//while (1);
@@ -146,7 +146,7 @@ int checkWin(){
 void writeToHTML()
 {
 	int i; // For loop counter. 
-	writefp = fopen("./lamedisplay.html", "w");
+	writefp = fopen("./cooldisplay.html", "w");
 	//Writes line by line. 
 	for (i=0;i<256;i++){
 		if (doc[i] != NULL) fprintf( writefp, "%s", doc[i]);
@@ -163,12 +163,15 @@ void startup()
 	// writeGrid[boardp++]=lp++; This lets us write to specific places in the file more easily.
 	doc[lp]="<!DOCTYPE html>\n"; lp++;
 	doc[lp]="<html>\n"; lp++;
-	doc[lp]="<meta http-equiv=\"Refresh\"content=\"10\">\n"; lp++;
+	doc[lp]="<meta http-equiv="Refresh"content="10">\n"; lp++;
 	doc[lp]="<body>\n"; lp++;
-	doc[lp]="<h1>Tic-Tac-Toe Game</h1>\n"; lp++;
-	doc[lp]="<p>PlEAsE plAy MeEE3!</p>\n"; lp++;
-	doc[lp]="<table border=\"1\">\n"; lp++;
+	doc[lp]="<h1>Connect 4 Game</h1>\n"; lp++;
+	doc[lp]="<p>Good luck and have fun.</p>\n"; lp++;
+	doc[lp]="<table border="1">\n"; lp++;
 	doc[lp]="<tr>\n"; lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
 	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
 	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
 	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
@@ -177,14 +180,44 @@ void startup()
 	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
 	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
 	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
 	doc[lp]="</tr>\n"; lp++;
 	doc[lp]="<tr>\n"; lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="</tr>\n"; lp++;
+	doc[lp]="<tr>\n"; lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="</tr>\n"; lp++;
+	doc[lp]="<tr>\n"; lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="</tr>\n"; lp++;
+	doc[lp]="<tr>\n"; lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
+	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
 	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
 	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
 	doc[lp]="<td> _ </td>\n"; writeGrid[boardp++]=lp++;
 	doc[lp]="</tr>\n"; lp++;
 	doc[lp]="</table>\n"; lp++;
-	doc[lp]="<p>Output:  </p>\n"; lp++;
+	doc[lp]="<p>Output: </p>\n"; lp++;
 	doc[lp]="</body>\n"; lp++;
 	doc[lp]="</html>\n"; lp++;
 }
