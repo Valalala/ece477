@@ -1,21 +1,21 @@
 // Base provided by Bruce Segee
 // Walter Rasmussen - Boom Johnson - Spring 2018
 // Prints a picture over serial communication. 
-#include <avr/io.h>
-#include <avr/interrupt.h>
+//#include <avr/io.h>
+//#include <avr/interrupt.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #define F_CPU 1000000UL
-#include <util/delay.h>
+//#include <util/delay.h>
 
-int serial_putchar(char, FILE *);
-int serial_getchar(FILE *);
-static FILE serial_stream = FDEV_SETUP_STREAM (serial_putchar, serial_getchar, _FDEV_SETUP_RW);
+//int serial_putchar(char, FILE *);
+//int serial_getchar(FILE *);
+//static FILE serial_stream = FDEV_SETUP_STREAM (serial_putchar, serial_getchar, _FDEV_SETUP_RW);
 
-void init_serial(void);
+//void init_serial(void);
 void printArt(void);
 
 /* this is the high_low server running on serial on an avr */
@@ -23,8 +23,8 @@ void printArt(void);
 /* note that the random number generator will always generate the same sequence */
 int main(void)
 { 
-  init_serial();
-  _delay_ms(2000);
+  //init_serial();
+  //_delay_ms(2000);
   while(1) 
   { 
     printArt();
@@ -34,7 +34,7 @@ int main(void)
 
 //U2Xn = 0 , 20.00MHz Clock ,BAUD 9600
 // UBBR = 129, 0.2% error, according to Table 24-7 of ATmega88 datasheet
-void init_serial(void)
+/*void init_serial(void)
 {
    UBRRn=129; // 9600 BAUD FOR 20MHZ SYSTEM CLOCK
    UCSR0A= 1<<U2X0;
@@ -43,7 +43,7 @@ void init_serial(void)
    stdin=&serial_stream;
    stdout=&serial_stream;
 
-}   
+}  */ 
 
 // Waits for input then prints                                                  */
 void printArt(void)
@@ -58,7 +58,7 @@ void printArt(void)
   fprintf(fp,"Welcome to the single image Art Exhibit. \r\n");
   fprintf(fp,"Enter any key to display the picture. Enter 'q' to exit. \r\n");
 
-  while(fscanf(fpr,"%c",&guess)!=1) fscanf(fpr,"%*s");
+  while(fscanf(fpr,"%c",&input)!=1) fscanf(fpr,"%*s");
 
   while(input!=end) // Exits when 'q' is pressed
   {   	
@@ -117,7 +117,7 @@ void printArt(void)
     fprintf(fp,"\x1b[%dm/////////////////////dhhhhhhhhhhhhhhhhdddy/...............+mhhhhhhhhhhhhhhhhhhdmNNNNNNNNNNNNNNN\r\n", (30+i++%7));
     fprintf(fp,"\x1b[%dm///////////////////ohdhhhhhhhhhhhhhhhhhhhhmy.............smhhhhhhhhhhhhhhhhhhmNNNNNNNNNNNNNNNNN\r\n", (30+i++%7));
 
-    while(fscanf(fpr,"%d",&guess)!=1) fscanf(fpr,"%*s");
+    while(fscanf(fpr,"%c",&input)!=1) fscanf(fpr,"%*s");
     
     fprintf(fp,"Congratualtions you got it right\r\n");
 
@@ -126,7 +126,7 @@ void printArt(void)
 }
 
 //simplest possible putchar, waits until UDR is empty and puts character
-int serial_putchar(char val, FILE * fp)
+/*int serial_putchar(char val, FILE * fp)
 {
   while((UCSR0A&(1<<UDRE0)) == 0); //wait until empty 
    UDR0 = val;
@@ -140,5 +140,5 @@ int serial_getchar(FILE * fp)
 {
    while((UCSR0A&(1<<RXC0)) == 0);  //WAIT FOR CHAR
    return UDR0;
-}     
+} */    
 
