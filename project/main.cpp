@@ -14,7 +14,8 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-#define EPOCHS 15000
+// # of iterations
+#define EPOCHS 100
 
 vector<float> X {
     5.1, 3.5, 1.4, 0.2,
@@ -188,9 +189,9 @@ void print ( const vector <float>& m, int n_rows, int n_columns ) {
     
     for( int i = 0; i != n_rows; ++i ) {
         for( int j = 0; j != n_columns; ++j ) {
-            cout << m[ i * n_columns + j ] << " ";
+            cout << m[ i * n_columns + j ] << ", ";
         }
-        cout << '\n';
+        //cout << '\n';
     }
     cout << endl;
 }
@@ -205,9 +206,9 @@ int main(int argc, const char * argv[]) {
         vector<float> W_delta = dot(transpose( &X[0], 4, 4 ), pred_delta, 4, 4, 1);        
         W = W + W_delta;
         
-        if (i == EPOCHS-1){
+        //if (i == EPOCHS-1){
             print ( pred, 4, 1 );
-        };
+        //};
     };
 
     return 0;
