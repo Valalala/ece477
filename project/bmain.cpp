@@ -31,10 +31,10 @@ vector<float> y {
     1 };
 
 vector<float> W {
-    0.0,
-    0.0,
-    0.0,
-    0.0};
+    0.5,
+    0.5,
+    0.5,
+    0.5};
 
 vector <float> sigmoid_d (const vector <float>& m1) {
     
@@ -208,9 +208,9 @@ int main(int argc, const char * argv[]) {
 	W = W + W_delta;
         
         //if (i == EPOCHS-1){
-            print ( pred, 4, 1 );
+            //print ( pred, 4, 1 );
         //};
-	//print(W, 4, 1);
+	print(W, 4, 1);
     };
 
     return 0;
