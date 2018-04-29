@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include "main.h"
 
 using std::vector;
 using std::cout;
@@ -17,7 +18,7 @@ using std::endl;
 // # of iterations
 #define EPOCHS 100
 
-vector<float> X {
+/*vector<float> X {
     5.1, 3.5, 1.4, 0.2,
     4.9, 3.0, 1.4, 0.2,
     6.2, 3.4, 5.4, 2.3,
@@ -28,7 +29,9 @@ vector<float> y {
     0,
     0,
     1,
-    1 };
+    1 };*/
+//extern vector<float> X, Y;
+
 
 vector<float> W {
     0.0,
@@ -197,21 +200,26 @@ void print ( const vector <float>& m, int n_rows, int n_columns ) {
 }
 
 int main(int argc, const char * argv[]) {
-
-    for (unsigned i = 0; i != EPOCHS; ++i) {
-        
-        vector<float> pred = sigmoid(dot(X, W, 4, 4, 1 ) );
-        vector<float> pred_error = y - pred;        
-        vector<float> pred_delta = pred_error * sigmoid_d(pred);        
-        vector<float> W_delta = dot(transpose( &X[0], 4, 4 ), pred_delta, 4, 4, 1);
 	
-	W = W + W_delta;
-        
-        //if (i == EPOCHS-1){
-            print ( pred, 4, 1 );
-        //};
-	//print(W, 4, 1);
-    };
+	//print(X, X.size()/4, 4);
 
-    return 0;
+
+	for (unsigned i = 0; i != EPOCHS; ++i) {
+        
+		vector<float> pred = sigmoid(dot(X, W, X.size()/4, 4, 1 ) );
+		vector<float> pred_error = Y - pred;        
+		vector<float> pred_delta = pred_error * sigmoid_d(pred);        
+		vector<float> W_delta = dot(transpose( &X[0], 4, 4 ), pred_delta, 4, 4, 1);
+	
+		W = W + W_delta;
+        
+		//if (i == EPOCHS-1){
+			//print ( pred, pred.size(), 1 );
+		//};
+		print(W, 4, 1);
+	};
+
+	return 0;
 }
+
+
