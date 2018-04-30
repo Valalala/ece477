@@ -9,6 +9,9 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <numeric>
+#include <algorithm>
+#include <random>
 #include "main.h"
 
 using std::vector;
@@ -31,13 +34,13 @@ vector<float> y {
     1,
     1 };*/
 //extern vector<float> X, Y;
+vector<float> indexer(Y.size()/3); //Indexing throught training data in random order. 
 
-
-vector<float> W {
+/*vector<float> W {
     0.0,
     0.0,
     0.0,
-    0.0};
+    0.0};*/
 
 vector <float> sigmoid_d (const vector <float>& m1) {
     
@@ -109,6 +112,7 @@ vector <float> operator-(const vector <float>& m1, const vector <float>& m2){
     
     for (unsigned i = 0; i != VECTOR_SIZE; ++i){
         difference[i] = m1[i] - m2[i];
+        //difference[i] = m1[indexer[i]] - m2[i];
     };
     
     return difference;
@@ -149,6 +153,7 @@ vector <float> transpose (float *m, const int C, const int R) {
         unsigned i = n/C;
         unsigned j = n%C;
         mT[n] = m[R*j + i];
+        //mT[n] = m[R*j + indexer[i]];
     }
     
     return mT;
@@ -174,6 +179,7 @@ vector <float> dot (const vector <float>& m1, const vector <float>& m2, const in
             output[ row * m2_columns + col ] = 0.f;
             for( int k = 0; k != m1_columns; ++k ) {
                 output[ row * m2_columns + col ] += m1[ row * m1_columns + k ] * m2[ k * m2_columns + col ];
+                //output[ row * m2_columns + col ] += m1[ indexer[row] * m1_columns + k ] * m2[ k * m2_columns + col ];
             }
         }
     }
@@ -181,6 +187,7 @@ vector <float> dot (const vector <float>& m1, const vector <float>& m2, const in
     return output;
 }
 
+//Prints vectors.
 void print ( const vector <float>& m, int n_rows, int n_columns ) {
     
     /*  "Couts" the input vector as n_rows x n_columns matrix.
@@ -199,24 +206,88 @@ void print ( const vector <float>& m, int n_rows, int n_columns ) {
     cout << endl;
 }
 
+// Randomizes the order of a matrix.
+// Used to prevent overfit by mixing up the order of training data.
+vector<float> shuffleData(const vector <float>& m, const vector <float>& mix, int m_columns) {
+	vector<float> out(m.size(), 0);
+	
+	for( int i = 0; i != m.size()/m_columns; ++i ) {
+		for( int j = 0; j != m_columns; ++j ) {
+			out[ i * m_columns + j] = m[ mix[i] * m_columns + j ];
+		}
+	}
+
+	return out;
+}
+
+// The neural network
 int main(int argc, const char * argv[]) {
 	
+	//random_shuffle(indexer.begin(), indexer.end());
+	std::default_random_engine generator;
+	std::normal_distribution<float> distribution(0,1);
+	//float number = distribution(generator);
+
+	//vector<float> indexer(Y.size(), 0);	
+	std::iota (std::begin(indexer), std::end(indexer), 0); //Fill with 0,1,...
+	//print(indexer, indexer.size(), 1);
 	//print(X, X.size()/4, 4);
-
-
-	for (unsigned i = 0; i != EPOCHS; ++i) {
-        
-		vector<float> pred = sigmoid(dot(X, W, X.size()/4, 4, 1 ) );
-		vector<float> pred_error = Y - pred;        
-		vector<float> pred_delta = pred_error * sigmoid_d(pred);        
-		vector<float> W_delta = dot(transpose( &X[0], 4, 4 ), pred_delta, 4, 4, 1);
 	
-		W = W + W_delta;
-        
+	vector<float> WL0(4*4, 0);
+	vector<float> WL1(4*3, 0);
+	
+	//init weights = normal distribution
+	for(unsigned n = 0; n != WL0.size(); ++n){ WL0[n] = distribution(generator); }
+	for(unsigned n = 0; n != WL1.size(); ++n){ WL1[n] = distribution(generator); }
+	//print(WL1, 4, 3);
+	//print(Y, Y.size()/3, 3);
+
+	for (unsigned i = 0; i != EPOCHS; ++i) { 
+		random_shuffle(indexer.begin(), indexer.end());
+		//X = shuffleData( X, indexer, 4);
+		//Y = shuffleData( Y, indexer, 3);
+		
+
+		//if (i==1) print(Y, Y.size()/3, 3);
+		
+		vector<float> hid = sigmoid(dot(X, WL0, X.size()/4, 4, 4) );
+		vector<float> pred = sigmoid(dot(hid, WL1, hid.size()/4, 4, 3) );
+		//vector<float> pred = sigmoid(dot(X, WL1, X.size()/4, 4, 3) );
+
+		vector<float> pred_error = Y - pred;        
+		
+		vector<float> pred_delta = pred_error * sigmoid_d(pred);
+		
+		vector<float> tL1 = transpose( &hid[0], 4, hid.size()/4 );
+		vector<float> hid_error = dot(tL1, pred_delta, 4, tL1.size()/4, 3);
+
+		vector<float> hid_delta = hid_error * sigmoid_d(hid);
+		
+		
+
+		
+	
+		vector<float> hid_delta = pred_error * sigmoid_d(hid);
+		vector<float> tL0 = transpose( &X[0], 4, X.size()/4 );
+		vector<float> WL0_delta = dot(tL0, hid_delta, 4, tL0.size()/4, 4);
+		WL0 = WL0 + WL0_delta;
+
+
+		vector<float> pred_delta = pred_error * sigmoid_d(pred);
+		vector<float> tL1 = transpose( &hid[0], 4, hid.size()/4 );
+		vector<float> WL1_delta = dot(tL1, pred_delta, 4, tL1.size()/4, 3);
+		WL1 = WL1 + WL1_delta;
+        	
+		//random_shuffle(indexer.begin(), indexer.end());
+		
 		//if (i == EPOCHS-1){
-			//print ( pred, pred.size(), 1 );
+			//print ( pred, pred.size()/3, 3 );
 		//};
-		print(W, 4, 1);
+		//print(WL1, WL1.size()/3, 3);
+		//print(Y, Y.size()/3, 3);
+		cout << pred[0] << ", " << pred[1] << ", " << pred[2] << "\n";
+		cout << Y[0] << ", " << Y[1] << ", " << Y[2] << "\n";
+		
 	};
 
 	return 0;
