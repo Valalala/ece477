@@ -1,10 +1,8 @@
-//
-//  main.cpp
-//  mlperceptron
-//
-//  Created by Sergei Bugrov on 7/1/17.
-//  Copyright � 2017 Sergei Bugrov. All rights reserved.
-//
+// Base provided by Sergei Bugrov
+// https://cognitivedemons.wordpress.com/2017/07/06/a-neural-network-in-10-lines-of-c-code/
+// Walter Rasmussen - Boom Johnson - Spring 2018
+// Three layer neural network
+// main.cpp
 
 #include <iostream>
 #include <vector>
@@ -21,26 +19,7 @@ using std::endl;
 // # of iterations
 #define EPOCHS 100
 
-/*vector<float> X {
-    5.1, 3.5, 1.4, 0.2,
-    4.9, 3.0, 1.4, 0.2,
-    6.2, 3.4, 5.4, 2.3,
-    5.9, 3.0, 5.1, 1.8
-};
-
-vector<float> y {
-    0,
-    0,
-    1,
-    1 };*/
-//extern vector<float> X, Y;
 vector<float> indexer(Y.size()/3); //Indexing throught training data in random order. 
-
-/*vector<float> W {
-    0.0,
-    0.0,
-    0.0,
-    0.0};*/
 
 vector <float> sigmoid_d (const vector <float>& m1) {
     
@@ -243,37 +222,39 @@ int main(int argc, const char * argv[]) {
 	//print(Y, Y.size()/3, 3);
 
 	for (unsigned i = 0; i != EPOCHS; ++i) { 
+		// shuffles the order of the data
 		random_shuffle(indexer.begin(), indexer.end());
-		//X = shuffleData( X, indexer, 4);
-		//Y = shuffleData( Y, indexer, 3);
-		
+		X = shuffleData( X, indexer, 4);
+		Y = shuffleData( Y, indexer, 3);
 
 		//if (i==1) print(Y, Y.size()/3, 3);
 		
+		// first set of predictions; input => hidden layer
 		vector<float> hid = sigmoid(dot(X, WL0, X.size()/4, 4, 4) );
+		// second set of predictions; hidden => out predictions
 		vector<float> pred = sigmoid(dot(hid, WL1, hid.size()/4, 4, 3) );
-		//vector<float> pred = sigmoid(dot(X, WL1, X.size()/4, 4, 3) );
 
+		// how far off the guesses are for each row
 		vector<float> pred_error = Y - pred;        
 		
+		//combines how wrong vs how confident
 		vector<float> pred_delta = pred_error * sigmoid_d(pred);
 		
 		vector<float> tL1 = transpose( &hid[0], 4, hid.size()/4 );
+		// how much the hidden layer effected the final error
 		vector<float> hid_error = dot(tL1, pred_delta, 4, tL1.size()/4, 3);
-
+		
+		//combines how wrong vs how confident
 		vector<float> hid_delta = hid_error * sigmoid_d(hid);
 		
-		
-
-		
 	
-		vector<float> hid_delta = pred_error * sigmoid_d(hid);
+		//vector<float> hid_delta = pred_error * sigmoid_d(hid);
 		vector<float> tL0 = transpose( &X[0], 4, X.size()/4 );
 		vector<float> WL0_delta = dot(tL0, hid_delta, 4, tL0.size()/4, 4);
 		WL0 = WL0 + WL0_delta;
 
 
-		vector<float> pred_delta = pred_error * sigmoid_d(pred);
+		//vector<float> pred_delta = pred_error * sigmoid_d(pred);
 		vector<float> tL1 = transpose( &hid[0], 4, hid.size()/4 );
 		vector<float> WL1_delta = dot(tL1, pred_delta, 4, tL1.size()/4, 3);
 		WL1 = WL1 + WL1_delta;
