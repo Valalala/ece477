@@ -240,26 +240,23 @@ int main(int argc, const char * argv[]) {
 		//combines how wrong vs how confident
 		vector<float> pred_delta = pred_error * sigmoid_d(pred);
 		
-		vector<float> tL1 = transpose( &hid[0], 4, hid.size()/4 );
+		vector<float> tWL1 = transpose( &WL1[0], 3, WL1.size()/3 ); // bad?
 		// how much the hidden layer effected the final error
-		vector<float> hid_error = dot(tL1, pred_delta, 4, tL1.size()/4, 3);
+		vector<float> hid_error = dot(pred_delta, tWL1, pred_delta.size()/3, 3, 3);
 		
 		//combines how wrong vs how confident
 		vector<float> hid_delta = hid_error * sigmoid_d(hid);
 		
-	
-		//vector<float> hid_delta = pred_error * sigmoid_d(hid);
-		vector<float> tL0 = transpose( &X[0], 4, X.size()/4 );
-		vector<float> WL0_delta = dot(tL0, hid_delta, 4, tL0.size()/4, 4);
-		WL0 = WL0 + WL0_delta;
+		// weights are adjusted based on confidance/wrongness
+		// the more confidant, the less the weight will shift
+        	vector<float> thid = transpose( &hid[0], 4, hid.size()/4 );
+                vector<float> WL1_delta = dot(thid, pred_delta, 4, thid.size()/4, 3);
+                WL1 = WL1 + WL1_delta;
 
-
-		//vector<float> pred_delta = pred_error * sigmoid_d(pred);
-		vector<float> tL1 = transpose( &hid[0], 4, hid.size()/4 );
-		vector<float> WL1_delta = dot(tL1, pred_delta, 4, tL1.size()/4, 3);
-		WL1 = WL1 + WL1_delta;
-        	
-		//random_shuffle(indexer.begin(), indexer.end());
+                vector<float> tX = transpose( &X[0], 4, X.size()/4 );
+                vector<float> WL0_delta = dot(tX, hid_delta, 4, tX.size()/4, 4);
+                WL0 = WL0 + WL0_delta;
+		
 		
 		//if (i == EPOCHS-1){
 			//print ( pred, pred.size()/3, 3 );
